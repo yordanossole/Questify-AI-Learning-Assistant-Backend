@@ -1,4 +1,11 @@
 fastapi
 uvicorn
 sqlalchemy
-python-dotenv 
+python-dotenv
+PyJWT
+redis
+pwdlib[argon2]
+jinja2
+psycopg2-binary
+email-validator
+python-multipart

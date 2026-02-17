@@ -1,10 +1,13 @@
 class AppException(Exception):
     pass
 
-class AlreadyExistsException(Exception):
+class AlreadyExistsException(AppException):
     pass
 
-class NotFoundException(Exception):
+class NotFoundException(AppException):
+    pass
+
+class BadRequestException(AppException):
     pass
 
 class ValidationException(AppException):
@@ -26,4 +29,7 @@ class DatabaseException(AppException):
     pass
 
 class ExternalServiceException(AppException):
+    pass
+
+class InvalidCredentials(AppException):
     pass
