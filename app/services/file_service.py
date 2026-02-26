@@ -23,3 +23,12 @@ class FileService():
                 raise ExternalServiceException(str(e))
             finally:
                 await file.close()
+
+    async def delete_document(self, file_key: str):
+        async with get_r2_client() as s3:
+            try:
+                await s3.delete_object(
+                    Bucket=settings.R2_BUCKET_NAME,
+                    Key=file_key)
+            except ClientError as e:
+                raise ExternalServiceException(str(e))

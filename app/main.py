@@ -3,9 +3,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette import status
 from app.core.exceptions import (AppException, NotFoundException, AlreadyExistsException, 
                              UnauthorizedException, PermissionDeniedException, 
+                             ExternalServiceException, DatabaseException, 
                              ValidationException, BusinessRuleViolation, 
                              BadRequestException, ConflictException, 
-                             ExternalServiceException, DatabaseException)
+                             ForbiddenException)
 from app.core.response import error_response
 
 from app.db.base import Base
@@ -83,3 +84,7 @@ async def external_service_exception_handler(request: Request, exc: ExternalServ
 @app.exception_handler(BadRequestException)
 async def bad_request_exception_handler(request: Request, exc: BadRequestException):
     return error_response(str(exc))
+
+@app.exception_handler(ForbiddenException)
+async def forbidden_exception_handler(request: Request, exc: ForbiddenException):
+    return error_response(str(exc), status_code=status.HTTP_403_FORBIDDEN)

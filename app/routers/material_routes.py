@@ -39,19 +39,18 @@ async def upload_material(
 
 	return success_response("Material uploaded successfully", data=data)
 
-# @router.delete("/{material_id}")
-# def delete_material(
-# 	material_id: int,
-# 	current_user: Annotated[User, Depends(get_current_user)],
-# 	db: Session = Depends(get_db)
-# ):
-# 	# Placeholder: Delete material
-# 	material_service = MaterialRepository(db)
-# 	file_service = FileService()
-# 	service = MaterialService(material_service, file_service)
-# 	# service.delete(material_id, current_user)
-# 	return success_response("Material deleted successfully")
+@router.delete("/{material_id}")
+async def delete_material(
+	material_id: str,
+	current_user: Annotated[User, Depends(get_current_user)],
+	db: Session = Depends(get_db)
+):
+	material_service = MaterialRepository(db)
+	file_service = FileService()
+	service = MaterialService(material_service, file_service)
+	await service.delete(material_id, current_user)
 
+	return success_response("Material deleted successfully")
 
 
 

@@ -33,3 +33,6 @@ class ExternalServiceException(AppException):
 
 class InvalidCredentials(AppException):
     pass
+
+class ForbiddenException(AppException):
+    pass
