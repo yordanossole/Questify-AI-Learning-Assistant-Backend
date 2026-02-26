@@ -24,3 +24,10 @@ class UserResponse(BaseModel):
     model_config = {
         "from_attributes": True
     }
+
+class MaterialResponse(BaseModel):
+    material_id: UUID
+
+    model_config = {
+        "from_attributes": True
+    }
