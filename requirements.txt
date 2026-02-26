@@ -11,3 +11,7 @@ email-validator
 python-multipart
 gunicorn
 alembic
+tiktoken
+python-magic
+aioboto3
+pydantic-settings

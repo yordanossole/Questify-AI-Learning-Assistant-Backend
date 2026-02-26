@@ -10,7 +10,7 @@ from app.core.response import error_response
 
 from app.db.base import Base
 from app.db.session import engine
-from app.routers import auth_routes
+from app.routers import auth_routes, material_routes
 
 app = FastAPI()
 
@@ -22,7 +22,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(auth_routes.router, prefix="/api")
+app.include_router(auth_routes.router, prefix="/api/auth")
+app.include_router(material_routes.router, prefix="/api/material")
 
 
 @app.on_event("startup")
