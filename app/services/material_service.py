@@ -2,11 +2,11 @@ import magic
 
 from fastapi import UploadFile
 
-from app.repositories.material_repository import MaterialRepository
-from app.models.models import Material
-from app.core.config import MAX_FILE_SIZE, settings
-from app.core.exceptions import ValidationException
+from app.models.models import Material, User
 from app.services.file_service import FileService
+from app.core.config import MAX_FILE_SIZE, settings
+from app.repositories.material_repository import MaterialRepository
+from app.core.exceptions import ValidationException, NotFoundException, ForbiddenException
 
 class MaterialService:
     def __init__(self, material_repo: MaterialRepository, file_service: FileService):
@@ -37,11 +37,13 @@ class MaterialService:
         material = self.material_repo.create(material)
         return material
 
-    # def delete(self, material_id, user):
-    #     material = self.material_repo.get_by_id(material_id)
-    #     if not material or material.user_id != user.user_id:
-    #         return False
-    #     # Delete chunks via ChunkService
-    #     # self.chunk_service.delete_chunks_for_material(material_id)
-    #     # Delete material
-    #     return self.material_repo.delete(material_id)
+    async def delete(self, material_id: str, user: User):
+        material = self.material_repo.get_by_id(material_id)
+        if not material:
+            raise NotFoundException("Material not found")
+        
+        if material.user_id != user.user_id:
+            raise ForbiddenException("Access denied")
+        
+        await self.file_service.delete_document(file_key=material.file_key)
+        self.material_repo.delete(material_id)
