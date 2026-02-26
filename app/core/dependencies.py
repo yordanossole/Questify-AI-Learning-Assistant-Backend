@@ -8,7 +8,7 @@ from app.core.security import decode_jwt
 from app.repositories.user_repository import UserRepository
 from app.core.exceptions import NotFoundException, ValidationException
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/token")
 
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> User:
     try:
