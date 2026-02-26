@@ -1,17 +1,17 @@
-from fastapi import APIRouter, Depends, BackgroundTasks
-from fastapi.security import OAuth2PasswordRequestForm
-from sqlalchemy.orm import Session
 from typing import Annotated
 from starlette import status
+from sqlalchemy.orm import Session
+from fastapi import APIRouter, Depends, BackgroundTasks
+from fastapi.security import OAuth2PasswordRequestForm
 
 from app.db.session import get_db
-from app.repositories.user_repository import UserRepository
-from app.services.auth_service import AuthService
-from app.core.response import success_response
-from app.schemas.request import LoginRequest, RegisterRequest, VerifyAccountRequest, GetOTPRequest
-from app.core.dependencies import get_current_user
 from app.models.models import User
 from app.schemas.response import UserResponse
+from app.core.response import success_response
+from app.services.auth_service import AuthService
+from app.core.dependencies import get_current_user
+from app.repositories.user_repository import UserRepository
+from app.schemas.request import LoginRequest, RegisterRequest, VerifyAccountRequest, GetOTPRequest
 
 router = APIRouter()
 

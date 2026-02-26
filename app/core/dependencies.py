@@ -1,7 +1,7 @@
 from fastapi import Depends
+from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordBearer
 
-from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.models.models import User
 from app.core.security import decode_jwt

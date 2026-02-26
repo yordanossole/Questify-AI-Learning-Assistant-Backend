@@ -1,5 +1,6 @@
-from pydantic_settings import BaseSettings
-from typing import ClassVar
+from typing import Union 
+from pydantic import field_validator, Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     DATABASE_URL: str
@@ -14,50 +15,30 @@ class Settings(BaseSettings):
     OTP_EXPIRY_MINUTES: int
     SMTP_HOST: str
     SMTP_PORT: int
-    MAX_FILE_SIZE: int
-    ALLOWED_FILES: ClassVar[set[str]]
+    ALLOWED_FILES: Union[set[str], str] = Field(default_factory=set)
     R2_ACCOUNT_ID: str
     R2_ACCESS_KEY: str
     R2_SECRET_KEY: str
     R2_BUCKET_NAME: str
     MATERIAL_FOLDER: str
+    MAX_FILE_SIZE_MB: int
+
+    model_config = SettingsConfigDict(env_file=".env")
 
     @property
     def R2_ENDPOINT_URL(self) -> str:
         return f"https://{self.R2_ACCOUNT_ID}.r2.cloudflarestorage.com"
-
-    class Config:
-        env_file = ".env"
+    
+    @property
+    def MAX_FILE_SIZE_BYTES(self) -> int:
+        return self.MAX_FILE_SIZE_MB * 1024 * 1024
+    
+    @field_validator("ALLOWED_FILES", mode="before")
+    @classmethod
+    def parse_allowed_files(cls, v):
+        if isinstance(v, str):
+            return {item.strip() for item in v.split(",") if item.strip()}
+        return v
+    
 
 settings = Settings() # type: ignore
-
-
-from dotenv import load_dotenv
-import os
-load_dotenv()
-
-DATABASE_URL = os.environ['DATABASE_URL']
-REDIS_URL = os.environ['REDIS_URL']
-GMAIL_APP_PASSWORD = os.environ['GMAIL_APP_PASSWORD']
-APP_EMAIL = os.environ['APP_EMAIL']
-JWT_SECRET_KEY = os.environ['JWT_SECRET_KEY']
-ENCODING_ALGORITHM = os.environ['ENCODING_ALGORITHM']
-ACCESS_TOKEN_EXPIRE_MINUTES = int(os.environ['ACCESS_TOKEN_EXPIRE_MINUTES'])
-TOKEN_TYPE = os.environ['TOKEN_TYPE']
-HASH_SCHEME = os.environ['HASH_SCHEME']
-OTP_EXPIRY_MINUTES = int(os.environ['OTP_EXPIRY_MINUTES'])
-SMTP_HOST = os.environ['SMTP_HOST']
-SMTP_PORT = int(os.environ['SMTP_PORT'])
-ALLOWED_FILES = {
-    "application/pdf",
-    "text/plain",
-    "application/msword",
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    "application/rtf",
-    "text/markdown",
-    "application/vnd.ms-powerpoint",
-    "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-    "application/vnd.oasis.opendocument.presentation",
-    "application/vnd.oasis.opendocument.text",
-}
-MAX_FILE_SIZE = 50 * 1024 * 1024  # 50 MB

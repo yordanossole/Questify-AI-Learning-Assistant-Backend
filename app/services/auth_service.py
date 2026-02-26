@@ -2,7 +2,7 @@ import secrets
 
 from app.schemas.response import Token
 from app.repositories.user_repository import UserRepository
-from app.core.config import OTP_EXPIRY_MINUTES
+from app.core.config import settings
 from app.core.security import verify_password, create_access_token, hash_password
 from app.core.exceptions import InvalidCredentials, AlreadyExistsException, NotFoundException, AppException, BadRequestException
 from app.models.models import User
@@ -18,7 +18,7 @@ class AuthService:
     def send_registration_otp(self, email: str, otp: str, full_name: str):
         subject = "Verify your email"
         template = "otp_verification.html"
-        context = {"full_name": full_name, "otp": otp, "expiry_minutes": OTP_EXPIRY_MINUTES}
+        context = {"full_name": full_name, "otp": otp, "expiry_minutes": settings.OTP_EXPIRY_MINUTES}
         self.mailer.send_email(email, subject, template, context)
 
     def verify_account(self, email: str, otp: str):

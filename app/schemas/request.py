@@ -1,6 +1,6 @@
+from typing import Annotated
 from pydantic import BaseModel, EmailStr
 from pydantic.types import StringConstraints
-from typing import Annotated
 
 class RegisterRequest(BaseModel):
     full_name: str

@@ -4,7 +4,7 @@ from fastapi import UploadFile
 
 from app.models.models import Material, User
 from app.services.file_service import FileService
-from app.core.config import MAX_FILE_SIZE, settings
+from app.core.config import settings
 from app.repositories.material_repository import MaterialRepository
 from app.core.exceptions import ValidationException, NotFoundException, ForbiddenException
 
@@ -19,7 +19,7 @@ class MaterialService:
         file_size = file.file.tell()
         await file.seek(0)
 
-        if file_size > MAX_FILE_SIZE:
+        if file_size > settings.MAX_FILE_SIZE_BYTES:
             raise ValidationException("File too large")
         
         file_name = "_".join(file.filename.split()) if file.filename else ""

@@ -1,8 +1,9 @@
 import uuid
-from sqlalchemy import String, TIMESTAMP, func, Boolean, ForeignKey, Integer, Float, Text
-from sqlalchemy.dialects.postgresql import UUID, JSONB
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from typing import Optional, Any
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import String, TIMESTAMP, func, Boolean, ForeignKey, Integer, Float, Text
 
 from app.db.base import Base
 
@@ -65,7 +66,6 @@ class Material(Base):
 
     collection: Mapped["Collection"] = relationship(back_populates="materials")
     chunks: Mapped[list["MaterialChunk"]] = relationship(back_populates="material")
-    # extracted_units: Mapped[Optional[dict[str, Any]]] = mapped_column(JSONB , nullable=True)	
 
 class MaterialChunk(Base):
     __tablename__ = "material_chunks"
