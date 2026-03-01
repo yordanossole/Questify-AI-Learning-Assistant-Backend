@@ -27,3 +27,6 @@ class ChangePasswordRequest(BaseModel):
 class VerifyAccountRequest(BaseModel):
     otp: str
     email: EmailStr
+
+class MaterialsRequest(BaseModel):
+    material_ids: list[str]

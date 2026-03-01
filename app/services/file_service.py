@@ -32,4 +32,22 @@ class FileService():
                     Bucket=settings.R2_BUCKET_NAME,
                     Key=file_key)
             except ClientError as e:
+                raise ExternalServiceException(str(e)) 
+
+    async def get_document(self, file_key: str):
+        async with get_r2_client() as s3:
+            try:
+                response = await s3.get_object(
+                    Bucket=settings.R2_BUCKET_NAME,
+                    Key=file_key,
+                )
+                file_bytes = await response["Body"].read()
+                data = {
+                    "file_bytes": file_bytes,
+                    "content_type": response.get("ContentType"),
+                    "file_name": file_key
+                }
+
+                return data
+            except ClientError as e:
                 raise ExternalServiceException(str(e))

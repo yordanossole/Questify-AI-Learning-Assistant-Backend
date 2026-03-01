@@ -1,10 +1,15 @@
 from starlette import status
 from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+
 
 from app.db.base import Base
 from app.db.session import engine
+from app.core.config import settings
 from app.core.response import error_response
+from app.infrastructure.templates import jinja_env
 from app.routers import auth_routes, material_routes
 from app.core.exceptions import (AppException, NotFoundException, AlreadyExistsException, 
                              UnauthorizedException, PermissionDeniedException, 
@@ -26,6 +31,17 @@ app.add_middleware(
 app.include_router(auth_routes.router, prefix="/api/auth")
 app.include_router(material_routes.router, prefix="/api/material")
 
+app.mount("/assets", StaticFiles(directory="app/infrastructure/templates/assets"), name="assets")
+@app.get("/", response_class=HTMLResponse)
+def home():
+    template = jinja_env.get_template("index.html")
+
+    html_content = template.render(
+        api_version=settings.API_VERSION,
+        environment=settings.ENVIRONMENT
+    )
+
+    return HTMLResponse(content=html_content)
 
 @app.on_event("startup")
 def on_startup():

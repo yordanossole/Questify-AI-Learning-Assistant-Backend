@@ -9,11 +9,12 @@ from app.db.session import get_db
 from app.models.models import User
 from app.core.config import settings
 from app.core.response import success_response
-from app.schemas.response import MaterialResponse
+from app.schemas.response import MaterialResponse, CollectionResponse
+from app.schemas.request import MaterialsRequest
 from app.core.dependencies import get_current_user
 from app.core.exceptions import ValidationException
-from app.repositories.material_repository import MaterialRepository
-from app.services.material_service import MaterialService, FileService
+from app.services.material_service import MaterialService
+from app.services.collection_service import CollectionService
 
 router = APIRouter()
 
@@ -23,9 +24,7 @@ async def upload_material(
 	file: UploadFile = File(...),
 	db: Session = Depends(get_db)
 ):
-	material_repo = MaterialRepository(db)
-	file_service = FileService()
-	material_service = MaterialService(material_repo, file_service)
+	material_service = MaterialService(db)
     
 	file_content = await file.read()
 	file_type = magic.from_buffer(file_content, mime=True)
@@ -45,9 +44,24 @@ async def delete_material(
 	current_user: Annotated[User, Depends(get_current_user)],
 	db: Session = Depends(get_db)
 ):
-	material_service = MaterialRepository(db)
-	file_service = FileService()
-	service = MaterialService(material_service, file_service)
-	await service.delete(material_id, current_user)
+	material_service = MaterialService(db)
+	await material_service.delete(material_id, current_user)
 
 	return success_response("Material deleted successfully")
+
+@router.post("/preprocess")
+async def preprocess_materials(
+	payload: MaterialsRequest,
+	current_user: Annotated[User, Depends(get_current_user)],
+	db: Session = Depends(get_db)
+):
+	material_ids = payload.material_ids
+	collection_service = CollectionService(db)
+	material_service = MaterialService(db)
+
+	collection = collection_service.create_category(current_user)
+	materials = material_service.categorize(collection, material_ids)
+	await material_service.preprocess(current_user, materials)
+	data = CollectionResponse.model_validate(collection)
+
+	return success_response("Success", data=data)

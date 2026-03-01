@@ -1,19 +1,13 @@
 import smtplib
-from pathlib import Path
+
 from email.message import EmailMessage
-from jinja2 import Environment, FileSystemLoader, select_autoescape
+
 from app.core.config import settings
-
-TEMPLATES_DIR = Path(__file__).parent / "templates"
-
-env = Environment(
-    loader=FileSystemLoader(str(TEMPLATES_DIR)),
-    autoescape=select_autoescape(['html', 'xml'])
-)
+from app.infrastructure.templates import jinja_env
 
 class Mailer:
     def send_email(self, to_email: str, subject: str, template_name: str, context: dict):
-        template = env.get_template(template_name)
+        template = jinja_env.get_template(template_name)
         html_content = template.render(**context, app_email=settings.APP_EMAIL)
 
         msg = EmailMessage()

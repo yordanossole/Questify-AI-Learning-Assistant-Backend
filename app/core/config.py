@@ -15,6 +15,8 @@ class Settings(BaseSettings):
     OTP_EXPIRY_MINUTES: int
     SMTP_HOST: str
     SMTP_PORT: int
+    API_VERSION: str
+    ENVIRONMENT: str
     ALLOWED_FILES: Union[set[str], str] = Field(default_factory=set)
     R2_ACCOUNT_ID: str
     R2_ACCESS_KEY: str
@@ -22,6 +24,8 @@ class Settings(BaseSettings):
     R2_BUCKET_NAME: str
     MATERIAL_FOLDER: str
     MAX_FILE_SIZE_MB: int
+    UPSTASH_VECTOR_REST_URL: str
+    UPSTASH_VECTOR_REST_TOKEN: str
 
     model_config = SettingsConfigDict(env_file=".env")
 

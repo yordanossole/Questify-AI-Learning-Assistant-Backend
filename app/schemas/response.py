@@ -31,3 +31,15 @@ class MaterialResponse(BaseModel):
     model_config = {
         "from_attributes": True
     }
+
+class CollectionResponse(BaseModel):
+    collection_id: UUID
+    user_id: UUID
+    title: Optional[str] = None
+    description: Optional[str] = None
+    confidence: float
+    created_at: datetime
+
+    model_config = {
+        "from_attributes": True
+    }

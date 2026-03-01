@@ -15,3 +15,10 @@ tiktoken
 python-magic
 aioboto3
 pydantic-settings
+pdfplumber
+python-docx
+beautifulsoup4
+python-pptx
+odfpy
+striprtf
+upstash‑vector
